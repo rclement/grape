@@ -97,7 +97,7 @@ private:
     void loadPresetAtIndex (int presetIndex);
 
 private:
-    parameters::ParameterManager&   mParameters;
+    parameters::ParameterManager&   mParameterManager;
     Preset                          mCurrentPreset;
     int                             mCurrentPresetIndex;
     PresetChecker                   mPresetChecker;

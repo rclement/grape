@@ -47,8 +47,8 @@ static bool isMacOS ()
 
 //==============================================================================
 
-PresetManager::PresetManager (parameters::ParameterManager& parameters)
-    : mParameters (parameters)
+PresetManager::PresetManager (parameters::ParameterManager& parameterManager)
+    : mParameterManager (parameterManager)
     , mPresetChecker (*this)
 {
     loadDefaultPreset();
@@ -168,11 +168,11 @@ Preset PresetManager::getCurrentPreset() const
 
 void PresetManager::loadDefaultPreset()
 {
-    mParameters.resetAll();
+    mParameterManager.resetAll();
 
     mCurrentPreset = Preset();
     mCurrentPreset.setName ("Default");
-    mCurrentPreset.replaceState (mParameters.copyState());
+    mCurrentPreset.replaceState (mParameterManager.copyState());
     findCurrentPresetIndex();
 
     notifyPresetChanged();
@@ -184,7 +184,7 @@ void PresetManager::loadPreset (const Preset& preset)
     if (loadedPreset.loadFromFile())
     {
         mCurrentPreset = loadedPreset;
-        mParameters.replaceState (mCurrentPreset.copyState());
+        mParameterManager.replaceState (mCurrentPreset.copyState());
         findCurrentPresetIndex();
         notifyPresetChanged();
     }
@@ -219,7 +219,7 @@ bool PresetManager::saveCurrentPreset (const juce::String& presetName,
     auto userPreset = getUserPreset (presetName, presetBank);
     userPreset.setAuthor (presetAuthor);
     userPreset.setComments (presetComments);
-    userPreset.replaceState (mParameters.copyState());
+    userPreset.replaceState (mParameterManager.copyState());
 
     if (userPreset.saveToFile())
     {
@@ -255,7 +255,7 @@ void PresetManager::fromXml (const juce::XmlElement& xmlState)
 
 void PresetManager::checkPresetChanged ()
 {
-    const auto stateParameters = mParameters.copyState();
+    const auto stateParameters = mParameterManager.copyState();
     const auto different = !mCurrentPreset.checkState (stateParameters);
     const auto modified = mCurrentPreset.isModified();
 
